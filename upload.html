@@ -1,14 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload to Time Capsules</title>
+	<title>Upload to Time Capsules</title>
 </head>
 <body>
-    <h1>Upload Your Content</h1>
-    <form enctype="multipart/form-data" action="/upload.py" method="post">
-        <input type="file" name="file" required>
-        <input type="submit" value="Upload">
-    </form>
+	<h1>Upload Your Time Capsule</h1>
+	<form enctype="multipart/form-data" action="/upload.py" method="post">
+		<p>PNG File (max 200 KB):</p>
+		<input type="file" name="png_file" required><br><br>
+		
+		<p>Text (max 500 chars):</p>
+		<textarea name="text_data" rows="5" cols="40"></textarea><br><br>
+		
+		<p>Your Minecraft Username:</p>
+		<input type="text" name="username" required><br><br>
+		
+		<p>Optional Signature Name:</p>
+		<input type="text" name="signature"><br><br>
+		
+		<p>Game Version:</p>
+		<input type="text" name="game_version"><br><br>
+		
+		<p>Modloader:</p>
+		<input type="text" name="modloader"><br><br>
+		
+		<input type="submit" value="Upload">
+	</form>
 </body>
 </html>
-
