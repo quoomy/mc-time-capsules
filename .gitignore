@@ -1,0 +1,58 @@
+# ========== General ==========
+*.class
+*.log
+*.tmp
+*.temp
+*.out
+*.DS_Store
+*.swp
+*.swo
+*.iml
+
+# ========== Gradle & Build ==========
+.gradle/
+build/
+**/build/
+**/.gradle/
+!gradlew
+!gradlew.bat
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# ========== Architectury / Loom ==========
+# Loom cache for each subproject (common, fabric, neoforge, etc.)
+**/loom-cache/
+**/remapped_working/
+**/remapped_dist/
+
+# ========== Logs ==========
+**/logs/
+**/*.log
+**/debug.log
+**/latest.log
+
+# ========== Run Directories ==========
+# For Fabric
+fabric/run/
+# For NeoForge
+neoforge/run/
+
+# ========== IDE / Editor ==========
+.idea/
+.vscode/
+*.ipr
+*.iws
+*.idea/
+*.launch
+
+# ========== JAR / Javadoc / Archives ==========
+*.jar
+*.war
+*.ear
+*.zip
+
+# ========== Misc ==========
+/out/
+bin/
+dist/
+tmp/
