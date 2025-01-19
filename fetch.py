@@ -7,6 +7,7 @@ import random
 import base64
 
 MONITORED_DIR = '/var/www/timecapsules.quoomy/uploads/monitored'
+BASE_URL = 'https://timecapsules.quoomy.com/uploads/monitored'
 
 def read_file_if_exists(path, mode='r'):
     try:
@@ -44,14 +45,11 @@ def main():
     game_version = read_file_if_exists(os.path.join(capsule_path, "gameversion.txt")).strip()
     modloader = read_file_if_exists(os.path.join(capsule_path, "modloader.txt")).strip()
 
-    png_data = b""
-    try:
-        with open(os.path.join(capsule_path, "image.png"), "rb") as f:
-            png_data = f.read()
-    except FileNotFoundError:
-        pass
-
-    encoded_png = base64.b64encode(png_data).decode('utf-8') if png_data else None
+    image_path = os.path.join(capsule_path, "image.png")
+    if os.path.isfile(image_path):
+        image_url = f"{BASE_URL}/{chosen_dir}/image.png"
+    else:
+        image_url = ""
 
     response = {
         "capsule_id": chosen_dir,
@@ -61,7 +59,7 @@ def main():
         "timestamp": timestamp,
         "game_version": game_version,
         "mod_loader": modloader,
-        "encoded_png": encoded_png or ""
+        "image_url": image_url
     }
 
     print(json.dumps(response))
