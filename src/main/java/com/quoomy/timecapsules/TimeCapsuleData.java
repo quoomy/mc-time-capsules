@@ -59,7 +59,7 @@ public class TimeCapsuleData
 
         try
         {
-            URL url = new URL("timecapsules.quoomy.com/fetch.py");
+            URL url = new URL("https://timecapsules.quoomy.com/fetch.py");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);

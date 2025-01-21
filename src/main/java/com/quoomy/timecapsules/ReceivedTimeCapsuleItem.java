@@ -26,12 +26,12 @@ public class ReceivedTimeCapsuleItem extends Item
         TimeCapsuleData data = TimeCapsuleData.fetchTimeCapsuleData();
         if (!data.isValid())
         {
-            user.sendMessage(Text.of("Unable to decode time capsule right now. Please try again later with a stable connection."), true);
+            user.sendMessage(Text.of("Unable to decode time capsule right now. Please try again later with a stable connection."), false);
             return ActionResult.FAIL;
         }
         stack.set(ModRegistrations.RECEIVED_TIME_CAPSULE_ID_COMPONENT, data.getId());
         // MinecraftClient.getInstance().setScreen(new ReceivedTimeCapsuleScreen(data));
-        user.sendMessage(Text.of("Time Capsule received: " + data.getText()), true);
+        user.sendMessage(Text.of("Time Capsule received: " + data.getText()), false);
 
         return ActionResult.SUCCESS;
     }
