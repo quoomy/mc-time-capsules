@@ -2,5 +2,6 @@
 
 ## Branches
 - "server" -> website & nginx cgi scripts to receive and serve time capsule data
-- mod branches -> architectury mods to support both fabric and neoforge
-	- "mod_1.21.4"
+- mod branches
+	- "mod_1.21.4" (architectury approach, not (yet) functional)
+   	- "fabric_1.21.4"
