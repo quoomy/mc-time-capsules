@@ -16,10 +16,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.quoomy.timecapsules.fabric.ExampleModFabric"
+      "com.quoomy.timecapsules.fabric.TimeCapsulesModFabric"
     ],
     "client": [
-      "com.quoomy.timecapsules.fabric.client.ExampleModFabricClient"
+      "com.quoomy.timecapsules.fabric.client.TimeCapsulesModFabricClient"
     ]
   },
   "mixins": [
