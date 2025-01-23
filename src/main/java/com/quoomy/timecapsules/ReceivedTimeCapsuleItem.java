@@ -1,5 +1,6 @@
 package com.quoomy.timecapsules;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,8 +31,8 @@ public class ReceivedTimeCapsuleItem extends Item
             return ActionResult.FAIL;
         }
         stack.set(ModRegistrations.RECEIVED_TIME_CAPSULE_ID_COMPONENT, data.getId());
-        // MinecraftClient.getInstance().setScreen(new ReceivedTimeCapsuleScreen(data));
-        user.sendMessage(Text.of("Time Capsule received: " + data.getText()), false);
+        MinecraftClient.getInstance().setScreen(new ReceivedTimeCapsuleScreen(data));
+        // user.sendMessage(Text.of("Time Capsule received: " + data.getText()), false);
 
         return ActionResult.SUCCESS;
     }

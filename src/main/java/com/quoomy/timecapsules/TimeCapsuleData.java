@@ -99,8 +99,29 @@ public class TimeCapsuleData
             {
                 String imageUrl = jsonObject.get("image_url").getAsString();
                 URL imageUrlObj = new URL(imageUrl);
-                InputStream imageStream = imageUrlObj.openStream();
-                data.setImage(ImageIO.read(imageStream));
+                HttpURLConnection imgConnection = (HttpURLConnection) imageUrlObj.openConnection();
+                int code = imgConnection.getResponseCode();
+                Timecapsules.LOGGER.info("Image Response Code: {}", code);
+                Timecapsules.LOGGER.info("Image data type: {}", imgConnection.getContentType());
+                InputStream imageStream = imgConnection.getInputStream();
+                try (InputStream in = imgConnection.getInputStream()) {
+                    byte[] testBytes = new byte[256];
+                    int len = in.read(testBytes);
+                    System.out.println("First 256 bytes: " + new String(testBytes, 0, len));
+                }
+                try {
+                    BufferedImage img = ImageIO.read(imageStream);
+                    if (img == null)
+                        Timecapsules.LOGGER.error("Failed to load image for time capsule");
+                    else
+                    {
+                        data.setImage(img);
+                        Timecapsules.LOGGER.info("Image loaded successfully");
+                    }
+                } catch (IOException e) {
+                    Timecapsules.LOGGER.error("Failed to load image for time capsule: {}", e.getMessage());
+                }
+                Timecapsules.LOGGER.info("Reported content length: {}", imgConnection.getContentLength());
             }
 
             data.setValid(true);
