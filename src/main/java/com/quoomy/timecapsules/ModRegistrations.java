@@ -15,6 +15,7 @@ import java.util.function.Function;
 public class ModRegistrations
 {
     public static final ComponentType<Integer> RECEIVED_TIME_CAPSULE_ID_COMPONENT = ComponentType.<Integer>builder().codec(Codec.INT).packetCodec(PacketCodecs.INTEGER).build();
+    public static final ComponentType<Boolean> RECEIVED_TIME_CAPSULE_FETCH_ATTEMPTED_COMPONENT = ComponentType.<Boolean>builder().codec(Codec.BOOL).packetCodec(PacketCodecs.BOOLEAN).build();
 
     public static final Item RECEIVED_TIME_CAPSULE_ITEM = registerItem("time_capsule", ReceivedTimeCapsuleItem::new, new Item.Settings().fireproof().maxCount(1));
 
@@ -26,6 +27,7 @@ public class ModRegistrations
 
     public static void register()
     {
-        Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(Timecapsules.MOD_ID, "received_time_capsule"), RECEIVED_TIME_CAPSULE_ID_COMPONENT);
+        Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(Timecapsules.MOD_ID, "received_time_capsule_id"), RECEIVED_TIME_CAPSULE_ID_COMPONENT);
+        Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(Timecapsules.MOD_ID, "received_time_capsule_fetch_attempted"), RECEIVED_TIME_CAPSULE_FETCH_ATTEMPTED_COMPONENT);
     }
 }

@@ -62,7 +62,7 @@ public class ReceivedTimeCapsuleScreen extends Screen implements Closeable
         int leftX = this.width / 2 - 100;
 
         context.drawTextWithShadow(textRenderer, "Time Capsule ID: " + data.getId(), leftX, startY, 0xFFFFFF);
-        context.drawTextWithShadow(textRenderer, "Name/Signature: " + data.getNameOrSignature(), leftX, startY + 10, 0xFFFFFF);
+        context.drawTextWithShadow(textRenderer, "Name/Signature: " + data.getUserNameOrSignature(), leftX, startY + 10, 0xFFFFFF);
         context.drawTextWithShadow(textRenderer, "Game Version: " + data.getGameVersion(), leftX, startY + 20, 0xFFFFFF);
         context.drawTextWithShadow(textRenderer, "Modloader: " + data.getModloader(), leftX, startY + 30, 0xFFFFFF);
         context.drawTextWithShadow(textRenderer, "Text: " + data.getText(), leftX, startY + 40, 0xFFFFFF);
