@@ -4,9 +4,7 @@ import com.google.gson.JsonObject;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -18,6 +16,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Objects;
 
 import static net.fabricmc.fabric.impl.resource.loader.ModResourcePackUtil.GSON;
 
@@ -32,8 +31,6 @@ public class TimeCapsuleData
     private String modloader;
     private int timestamp;
     private boolean isValid;
-
-    // TODO: Add timestamps
 
     private void initEmpty()
     {
@@ -138,7 +135,7 @@ public class TimeCapsuleData
 
             if (this.isValid) // if valid, write to disk
             {
-                File capsuleFolder = getCapsuleFolder(this.id);
+                File capsuleFolder = getCapsuleFolder(String.valueOf(this.id));
                 if (!capsuleFolder.exists())
                     capsuleFolder.mkdirs();
 
@@ -176,12 +173,13 @@ public class TimeCapsuleData
         }
     }
 
-    public TimeCapsuleData(int capsuleId) // file loading constructor
+    public TimeCapsuleData(String capsuleId) // file loading constructor
     {
         initEmpty();
-        this.id = capsuleId;
+        if (!Objects.equals(capsuleId, TimeCapsuleItem.TO_UPLOAD_ID))
+            this.id = Integer.parseInt(capsuleId);
 
-        File capsuleFolder = getCapsuleFolder(id);
+        File capsuleFolder = getCapsuleFolder(capsuleId);
 
         if (!capsuleFolder.exists() || !capsuleFolder.isDirectory())
         {
@@ -240,10 +238,78 @@ public class TimeCapsuleData
         return "";
     }
 
-    private File getCapsuleFolder(int capsuleId)
+    private File getCapsuleFolder(String capsuleId)
     {
         Path gameDirPath = FabricLoader.getInstance().getGameDir();
         return new File(gameDirPath.toFile(), "timecapsules/" + capsuleId);
+    }
+
+    public void sendCapsule()
+    {
+        String boundary = "----TimeCapsuleBoundary" + System.currentTimeMillis();
+        String LINE_FEED = "\r\n";
+
+        try
+        {
+            URL url = new URL("https://timecapsules.quoomy.com/upload.py");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setUseCaches(false);
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            OutputStream outputStream = connection.getOutputStream();
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true);
+
+            addFormField(writer, boundary, "username", this.username);
+            addFormField(writer, boundary, "text_data", this.text);
+            if (!this.signature.isEmpty()) {
+                addFormField(writer, boundary, "signature", this.signature);
+            }
+            if (!this.gameVersion.isEmpty()) {
+                addFormField(writer, boundary, "game_version", this.gameVersion);
+            }
+            if (!this.modloader.isEmpty()) {
+                addFormField(writer, boundary, "modloader", this.modloader);
+            }
+
+            if (this.image != null)
+            {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(this.image, "png", baos);
+                byte[] imageBytes = baos.toByteArray();
+
+                writer.append("--").append(boundary).append(LINE_FEED);
+                writer.append("Content-Disposition: form-data; name=\"png_file\"; filename=\"image.png\"").append(LINE_FEED);
+                writer.append("Content-Type: image/png").append(LINE_FEED);
+                writer.append(LINE_FEED);
+                writer.flush();
+                outputStream.write(imageBytes);
+                outputStream.flush();
+                writer.append(LINE_FEED);
+                writer.flush();
+            }
+
+            writer.append("--").append(boundary).append("--").append(LINE_FEED);
+            writer.flush();
+        }
+        catch (IOException e)
+        {
+            Timecapsules.LOGGER.error("Failed to send time capsule: {}", e.getMessage());
+        }
+    }
+    private void addFormField(PrintWriter writer, String boundary, String name, String value) throws IOException
+    {
+        String LINE_FEED = "\r\n";
+        writer.append("--").append(boundary).append(LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=\"").append(name).append("\"").append(LINE_FEED);
+        writer.append("Content-Type: text/plain; charset=UTF-8").append(LINE_FEED);
+        writer.append(LINE_FEED);
+        writer.append(value).append(LINE_FEED);
+        writer.flush();
     }
 
     public int getId() { return this.id; }
