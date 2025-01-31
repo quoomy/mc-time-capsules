@@ -13,6 +13,11 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.apache.commons.io.FileUtils;
 import java.net.URL;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import static net.fabricmc.fabric.impl.resource.loader.ModResourcePackUtil.GSON;
 
@@ -25,6 +30,7 @@ public class TimeCapsuleData
     private String signature;
     private String gameVersion;
     private String modloader;
+    private int timestamp;
     private boolean isValid;
 
     // TODO: Add timestamps
@@ -38,6 +44,7 @@ public class TimeCapsuleData
         this.signature = "";
         this.gameVersion = "";
         this.modloader = "";
+        this.timestamp = -1;
         this.isValid = false;
     }
 
@@ -92,6 +99,8 @@ public class TimeCapsuleData
                 this.gameVersion = jsonObject.get("game_version").getAsString();
             if (jsonObject.has("mod_loader") && jsonObject.get("mod_loader").isJsonPrimitive())
                 this.modloader = jsonObject.get("mod_loader").getAsString();
+            if (jsonObject.has("timestamp") && jsonObject.get("timestamp").isJsonPrimitive())
+                this.timestamp = jsonObject.get("timestamp").getAsInt();
 
             if (jsonObject.has("image_url") && jsonObject.get("image_url").isJsonPrimitive())
             {
@@ -143,6 +152,8 @@ public class TimeCapsuleData
                     writeToFile(new File(capsuleFolder, "gameversion.txt"), this.gameVersion);
                 if (this.modloader != null && !this.modloader.isEmpty())
                     writeToFile(new File(capsuleFolder, "modloader.txt"), this.modloader);
+                if (this.timestamp > 0)
+                    writeToFile(new File(capsuleFolder, "timestamp.txt"), Integer.toString(this.timestamp));
                 if (this.image != null)
                     ImageIO.write(this.image, "png", new File(capsuleFolder, "image.png"));
             }
@@ -193,6 +204,9 @@ public class TimeCapsuleData
         File mlFile = new File(capsuleFolder, "modloader.txt");
         if (mlFile.exists())
             this.modloader = readFileContents(mlFile);
+        File timestampFile = new File(capsuleFolder, "timestamp.txt");
+        if (timestampFile.exists())
+            this.timestamp = Integer.parseInt(readFileContents(timestampFile));
         File imageFile = new File(capsuleFolder, "image.png");
         if (imageFile.exists())
         {
@@ -240,6 +254,7 @@ public class TimeCapsuleData
     public String getUserNameOrSignature() { return this.signature.isEmpty() ? this.username : this.signature; }
     public String getGameVersion() { return this.gameVersion; }
     public String getModloader() { return this.modloader; }
+    public int getTimestamp() { return this.timestamp; }
     public boolean isValid() { return this.isValid; }
 
     public String getDataPrintout()
@@ -250,5 +265,15 @@ public class TimeCapsuleData
                 "Game Version: " + this.gameVersion + "\n" +
                 "Modloader: " + this.modloader + "\n" +
                 "Text: " + this.text;
+    }
+
+    public String getFormattedTimestamp()
+    {
+        if (this.timestamp < 1_000_000_000) // September 2001. Mod was released in 2025.
+            return "";
+        Instant instant = Instant.ofEpochSecond(this.timestamp);
+        LocalDate date = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy").withLocale(Locale.GERMAN);
+        return date.format(formatter);
     }
 }

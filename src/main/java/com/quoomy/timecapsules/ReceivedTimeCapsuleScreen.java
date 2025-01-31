@@ -225,7 +225,13 @@ public class ReceivedTimeCapsuleScreen extends Screen implements Closeable
         textY += (int)(textRenderer.fontHeight * TEXT_SCALE + 2);
 
         drawScaledLine(context, "In Universe " + data.getModloader() + " " + data.getGameVersion(), textX, textY);
-        // textY += (int)(textRenderer.fontHeight * TEXT_SCALE + 2);
+        textY += (int)(textRenderer.fontHeight * TEXT_SCALE + 2);
+
+        if (!data.getFormattedTimestamp().isEmpty())
+        {
+            drawScaledLine(context, "Sent on " + data.getFormattedTimestamp(), textX, textY);
+            // textY += (int)(textRenderer.fontHeight * TEXT_SCALE + 2);
+        }
     }
     private void renderScrollPage(DrawContext context)
     {
