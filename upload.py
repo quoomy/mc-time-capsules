@@ -10,8 +10,8 @@ BASE_UPLOAD_DIR = '/var/www/timecapsules.quoomy/uploads'
 UNMONITORED_DIR = os.path.join(BASE_UPLOAD_DIR, 'unmonitored')
 USER_UPLOAD_JSON = os.path.join(BASE_UPLOAD_DIR, 'user_last_uploads.json')
 LAST_ID_FILE = os.path.join(UNMONITORED_DIR, 'last_id.txt')  # track capsule ID
-MAX_PNG_SIZE = 200 * 1024  # 200 KB in metric
-MAX_TEXT_SIZE = 500        # characters
+MAX_PNG_SIZE = 500 * 1024  # 500 KB in metric
+MAX_TEXT_SIZE = 1000       # characters
 ONE_MONTH_SECONDS = 30 * 24 * 3600
 
 def load_user_timestamps():
@@ -55,14 +55,14 @@ def main():
 
 	# Ensure presence of required fields
 	if "png_file" not in form:
-		print("<html><body><h2>PNG file is required! (ಠ_ಠ)🖕</h2></body></html>")
+		print("<html><body><h2>PNG file is required!</h2></body></html>")
 		return
 	username = form.getvalue("username")
 	if not username:
-		print("<html><body><h2>Username is required! (ಠ_ಠ)🖕</h2></body></html>")
+		print("<html><body><h2>Username is required!</h2></body></html>")
 		return
 	if "text_data" not in form:
-		print("<html><body><h2>Text data is required! (ಠ_ಠ)🖕</h2></body></html>")
+		print("<html><body><h2>Text data is required!</h2></body></html>")
 		return
 
 	# Retrieve form fields
