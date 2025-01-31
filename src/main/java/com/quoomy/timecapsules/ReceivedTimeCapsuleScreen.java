@@ -10,6 +10,7 @@ import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
@@ -19,8 +20,8 @@ import java.util.List;
 public class ReceivedTimeCapsuleScreen extends Screen implements Closeable
 {
     private static final Identifier BOOK_TEXTURE = Identifier.of("minecraft", "textures/gui/book.png");
-    private static final int BOOK_WIDTH = 192;
-    private static final int BOOK_HEIGHT = 192;
+    private static final int BOOK_WIDTH = 186;
+    private static final int BOOK_HEIGHT = 182;
 
     private static final int TEXT_X = 36;
     private static final int TEXT_Y = 30;
@@ -45,7 +46,6 @@ public class ReceivedTimeCapsuleScreen extends Screen implements Closeable
     private ButtonWidget nextPageButton;
     private ButtonWidget prevPageButton;
 
-    // calc positions
     private int BOOK_X;
     private int BOOK_Y;
 
@@ -62,10 +62,13 @@ public class ReceivedTimeCapsuleScreen extends Screen implements Closeable
 
         BOOK_X = (this.width - BOOK_WIDTH) / 2;
         BOOK_Y = 2;
-        int PAGE_BUTTONS_Y = BOOK_Y + BOOK_HEIGHT + 5;
-        int CLOSE_BUTTON_Y = PAGE_BUTTONS_Y + 25;
+        int PAGE_BUTTONS_Y = BOOK_Y + BOOK_HEIGHT;
+        int BUTTON_HEIGHT = 20;
+        int PAGE_BUTTON_HEIGHT = BUTTON_HEIGHT / 2;
+        int MORE_INFO_BUTTON_Y = PAGE_BUTTONS_Y + PAGE_BUTTON_HEIGHT + 5;
+        int CLOSE_BUTTON_Y = MORE_INFO_BUTTON_Y + BUTTON_HEIGHT + 1;
 
-        int centerX = (this.width - BOOK_WIDTH) / 2;
+        int centerX = this.width / 2;
 
         BufferedImage image = data.getImage();
         if (image != null)
@@ -93,16 +96,28 @@ public class ReceivedTimeCapsuleScreen extends Screen implements Closeable
 
         buildScrollLines();
 
+        int pageRowWidth = 20 + 5 + 20;
+        int firstRowStartX = centerX - (pageRowWidth / 2);
+
         this.prevPageButton = ButtonWidget.builder(Text.literal("<"), (button) -> goToPreviousPage())
-                .dimensions(centerX + 43, PAGE_BUTTONS_Y, 20, 20).build();
+                .dimensions(firstRowStartX, PAGE_BUTTONS_Y, 20, PAGE_BUTTON_HEIGHT).build();
         this.nextPageButton = ButtonWidget.builder(Text.literal(">"), (button) -> goToNextPage())
-                .dimensions(centerX + 116, PAGE_BUTTONS_Y, 20, 20).build();
+                .dimensions(firstRowStartX + 20 + 3, PAGE_BUTTONS_Y, 20, PAGE_BUTTON_HEIGHT).build();
 
         this.addDrawableChild(prevPageButton);
         this.addDrawableChild(nextPageButton);
 
-        int closeBtnX = (this.width / 2) - 50;
-        this.addDrawableChild(ButtonWidget.builder(Text.literal("Done"), (button) -> this.close()).dimensions(closeBtnX, CLOSE_BUTTON_Y, 100, 20).build());
+        int doneButtonWidth = 100;
+        int moreInfoButtonWidth = 150;
+
+        ButtonWidget moreInfoButton = ButtonWidget.builder(Text.literal("More Info / Report"), (button) -> Util.getOperatingSystem().open("https://timecapsules.quoomy.com/"))
+                .dimensions(centerX - (moreInfoButtonWidth / 2), MORE_INFO_BUTTON_Y, moreInfoButtonWidth, BUTTON_HEIGHT).build();
+
+        ButtonWidget closeButton = ButtonWidget.builder(Text.literal("Done"), (button) -> this.close())
+                .dimensions(centerX - (doneButtonWidth / 2), CLOSE_BUTTON_Y, doneButtonWidth, BUTTON_HEIGHT).build();
+
+        this.addDrawableChild(closeButton);
+        this.addDrawableChild(moreInfoButton);
 
         updatePageButtons();
     }
