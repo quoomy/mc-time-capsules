@@ -39,7 +39,8 @@ public class TimeCapsuleItem extends Item
             if (sent)
                 return ActionResult.FAIL;
 
-            MinecraftClient.getInstance().setScreen(new SendingTimeCapsuleScreen());
+            MinecraftClient.getInstance().setScreen(new SendingTimeCapsuleScreen(stack));
+            stack.set(ModRegistrations.TIME_CAPSULE_SEND_ATTEMPTED_COMPONENT, false);
 
             return ActionResult.SUCCESS;
         }
@@ -79,8 +80,9 @@ public class TimeCapsuleItem extends Item
 
         if (isSendingCapsule)
         {
+            boolean dataDone = stack.getOrDefault(ModRegistrations.TIME_CAPSULE_DATA_DONE, false);
             boolean sent = stack.getOrDefault(ModRegistrations.TIME_CAPSULE_SEND_ATTEMPTED_COMPONENT, false);
-            if (sent)
+            if (sent || !dataDone)
                 return;
             stack.set(ModRegistrations.TIME_CAPSULE_SEND_ATTEMPTED_COMPONENT, true);
 

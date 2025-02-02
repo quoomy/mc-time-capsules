@@ -258,6 +258,7 @@ public class TimeCapsuleData
             connection.setDoInput(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+            connection.setRequestProperty("mod-version", Timecapsules.MOD_VERSION);
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
 
