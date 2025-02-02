@@ -16,7 +16,6 @@ import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,7 +30,6 @@ public class SendingTimeCapsuleScreen extends Screen
 {
     private static final int MAX_TEXT_SIZE = 1000;
     private static final int MAX_SIGNATURE_SIZE = 100;
-    private static final int MAX_PNG_SIZE = 500 * 1024;
 
     private static ItemStack item = null;
 
@@ -322,7 +320,6 @@ public class SendingTimeCapsuleScreen extends Screen
                 infoMessage = "Failed to read the image file!";
                 return;
             }
-            BufferedImage processedImage = scaleImageToMaxSize(image, MAX_PNG_SIZE);
 
             MinecraftClient client = MinecraftClient.getInstance();
             Path gameDir = client.runDirectory.toPath();
@@ -340,7 +337,7 @@ public class SendingTimeCapsuleScreen extends Screen
             Files.writeString(uploadFolder.resolve("modloader.txt"), modloader);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(processedImage, "png", baos);
+            ImageIO.write(image, "png", baos);
             byte[] imageBytes = baos.toByteArray();
             Files.write(uploadFolder.resolve("image.png"), imageBytes);
 
@@ -365,37 +362,6 @@ public class SendingTimeCapsuleScreen extends Screen
                 Timecapsules.LOGGER.error("Failed to clean upload folder: {}", ex.getMessage());
             }
         }
-    }
-
-    private BufferedImage scaleImageToMaxSize(BufferedImage image, int maxBytes) throws IOException
-    {
-        double scale = 1.0;
-        BufferedImage currentImage = image;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(currentImage, "png", baos);
-        byte[] bytes = baos.toByteArray();
-        if (bytes.length <= maxBytes)
-            return currentImage;
-
-        // Iteratively scale down the image (reduce by 10% each loop)
-        while (bytes.length > maxBytes && scale > 0.1)
-        {
-            scale *= 0.9;
-            int newWidth = (int) (image.getWidth() * scale);
-            int newHeight = (int) (image.getHeight() * scale);
-            BufferedImage scaledImage = new BufferedImage(newWidth, newHeight, image.getType());
-            Graphics2D g2d = scaledImage.createGraphics();
-            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            g2d.drawImage(image, 0, 0, newWidth, newHeight, null);
-            g2d.dispose();
-            baos.reset();
-            ImageIO.write(scaledImage, "png", baos);
-            bytes = baos.toByteArray();
-            currentImage = scaledImage;
-        }
-        if (bytes.length > maxBytes)
-            throw new IOException("Unable to scale image to acceptable size. Final size: " + bytes.length + " bytes.");
-        return currentImage;
     }
 
     @Override

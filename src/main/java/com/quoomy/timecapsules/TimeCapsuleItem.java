@@ -10,8 +10,12 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.CompletableFuture;
 
 public class TimeCapsuleItem extends Item
@@ -35,14 +39,34 @@ public class TimeCapsuleItem extends Item
 
         if (isSendingCapsule)
         {
-            boolean sent = stack.getOrDefault(ModRegistrations.TIME_CAPSULE_SEND_ATTEMPTED_COMPONENT, false);
-            if (sent)
-                return ActionResult.FAIL;
-
             MinecraftClient.getInstance().setScreen(new SendingTimeCapsuleScreen(stack));
-            stack.set(ModRegistrations.TIME_CAPSULE_SEND_ATTEMPTED_COMPONENT, false);
 
-            return ActionResult.SUCCESS;
+            CompletableFuture.runAsync(() -> {
+                TimeCapsuleData data = new TimeCapsuleData(TO_UPLOAD_ID);
+                if (!data.isValid())
+                {
+                    Timecapsules.LOGGER.info("Failed to send time capsule. Removing from to_upload folder.");
+                    if (user instanceof PlayerEntity player)
+                        player.sendMessage(Text.of("Failed to send time capsule. Please try again later with a stable connection."), false);
+                    removeToUploadFolder();
+                    return;
+                }
+
+                String sendingReturn = data.sendCapsule();
+                removeToUploadFolder();
+
+                if (sendingReturn.isEmpty())
+                {
+                    if (user instanceof PlayerEntity player)
+                        player.sendMessage(Text.of("Time capsule sent successfully!"), false);
+                    stack.decrement(1);
+                }
+                else
+                {
+                    if (user instanceof PlayerEntity player)
+                        player.sendMessage(Text.of("Failed to send time capsule. Please try again later with a stable connection and verify all data is correct."), false);
+                }
+            });
         }
         else
         {
@@ -63,8 +87,9 @@ public class TimeCapsuleItem extends Item
             stack.set(ModRegistrations.TIME_CAPSULE_FETCH_ATTEMPTED_COMPONENT, true);
             MinecraftClient.getInstance().setScreen(new ReceivedTimeCapsuleScreen(data));
 
-            return ActionResult.SUCCESS;
         }
+
+        return ActionResult.SUCCESS;
     }
 
     @Override
@@ -78,49 +103,7 @@ public class TimeCapsuleItem extends Item
 
         boolean isSendingCapsule = stack.getOrDefault(ModRegistrations.TIME_CAPSULE_IS_SENDING_COMPONENT, false);
 
-        if (isSendingCapsule)
-        {
-            boolean dataDone = stack.getOrDefault(ModRegistrations.TIME_CAPSULE_DATA_DONE, false);
-            boolean sent = stack.getOrDefault(ModRegistrations.TIME_CAPSULE_SEND_ATTEMPTED_COMPONENT, false);
-            if (sent || !dataDone)
-                return;
-            stack.set(ModRegistrations.TIME_CAPSULE_SEND_ATTEMPTED_COMPONENT, true);
-
-            CompletableFuture.runAsync(() -> {
-                TimeCapsuleData data = new TimeCapsuleData(TO_UPLOAD_ID);
-                if (!data.isValid())
-                {
-                    Timecapsules.LOGGER.info("Failed to send time capsule. Removing from to_upload folder.");
-                    if (entity instanceof PlayerEntity player)
-                        player.sendMessage(Text.of("Failed to send time capsule. Please try again later with a stable connection."), false);
-                    removeToUploadFolder();
-                    return;
-                }
-
-                data.sendCapsule();
-
-                Path timeCapsulesPath = MinecraftClient.getInstance().runDirectory.toPath().resolve("timecapsules");
-                Path folderPath = timeCapsulesPath.resolve("to_upload");
-                Path newPath = timeCapsulesPath.resolve(String.valueOf(data.getId()));
-                try
-                {
-                    Files.move(folderPath, newPath);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                    Timecapsules.LOGGER.error("Failed to move time capsule to new folder.");
-                    stack.decrement(1); // remove item
-                    return;
-                }
-
-                // convert to received time capsule
-                stack.set(ModRegistrations.TIME_CAPSULE_ID_COMPONENT, data.getId());
-                stack.set(ModRegistrations.TIME_CAPSULE_IS_SENDING_COMPONENT, false);
-                stack.set(ModRegistrations.TIME_CAPSULE_FETCH_ATTEMPTED_COMPONENT, true);
-            });
-        }
-        else
+        if (!isSendingCapsule)
         {
             boolean fetched = stack.getOrDefault(ModRegistrations.TIME_CAPSULE_FETCH_ATTEMPTED_COMPONENT, false);
             if (fetched)
@@ -143,11 +126,34 @@ public class TimeCapsuleItem extends Item
     private void removeToUploadFolder()
     {
         CompletableFuture.runAsync(() -> {
-            Path folderPath = MinecraftClient.getInstance().runDirectory.toPath().resolve("timecapsules").resolve("to_upload");
+            Path folderPath = MinecraftClient.getInstance().runDirectory
+                    .toPath()
+                    .resolve("timecapsules")
+                    .resolve(TimeCapsuleItem.TO_UPLOAD_ID);
 
             try
             {
-                Files.deleteIfExists(folderPath);
+                if (Files.exists(folderPath))
+                {
+                    Files.walkFileTree(folderPath, new SimpleFileVisitor<Path>()
+                    {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
+                        {
+                            // Remove each file 🍆🤏
+                            Files.delete(file);
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
+                        {
+                            // Then delete directory once empty 🖕
+                            Files.delete(dir);
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                }
             }
             catch (Exception e)
             {
@@ -155,4 +161,5 @@ public class TimeCapsuleItem extends Item
             }
         });
     }
+
 }

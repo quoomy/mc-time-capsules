@@ -3,6 +3,7 @@ package com.quoomy.timecapsules;
 import com.google.gson.JsonObject;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -244,15 +245,18 @@ public class TimeCapsuleData
         return new File(gameDirPath.toFile(), "timecapsules/" + capsuleId);
     }
 
-    public void sendCapsule()
+    public String sendCapsule()
     {
         String boundary = "----TimeCapsuleBoundary" + System.currentTimeMillis();
         String LINE_FEED = "\r\n";
+        HttpURLConnection connection = null;
+        PrintWriter writer = null;
+        OutputStream outputStream = null;
 
         try
         {
             URL url = new URL("https://timecapsules.quoomy.com/upload.py");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
             connection.setUseCaches(false);
             connection.setDoOutput(true);
             connection.setDoInput(true);
@@ -262,8 +266,8 @@ public class TimeCapsuleData
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
 
-            OutputStream outputStream = connection.getOutputStream();
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true);
+            outputStream = connection.getOutputStream();
+            writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true);
 
             addFormField(writer, boundary, "username", this.username);
             addFormField(writer, boundary, "text_data", this.text);
@@ -279,6 +283,8 @@ public class TimeCapsuleData
 
             if (this.image != null)
             {
+                image = scaleImageToMaxSize(this.image, 500 * 1024);
+
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(this.image, "png", baos);
                 byte[] imageBytes = baos.toByteArray();
@@ -296,10 +302,40 @@ public class TimeCapsuleData
 
             writer.append("--").append(boundary).append("--").append(LINE_FEED);
             writer.flush();
+
+            int status = connection.getResponseCode();
+            if (status != HttpURLConnection.HTTP_OK)
+            {
+                String errorMsg = "HTTP status code " + status;
+                if (connection.getErrorStream() != null)
+                    errorMsg += ": " + new BufferedReader(new InputStreamReader(connection.getErrorStream())).readLine();
+                return errorMsg;
+            }
+
+            return "";
         }
         catch (IOException e)
         {
             Timecapsules.LOGGER.error("Failed to send time capsule: {}", e.getMessage());
+            return e.getMessage();
+        }
+        finally
+        {
+            if (writer != null)
+                writer.close();
+            if (outputStream != null)
+            {
+                try
+                {
+                    outputStream.close();
+                }
+                catch (IOException e)
+                {
+                    Timecapsules.LOGGER.error("Failed to close output stream: {}", e.getMessage());
+                }
+            }
+            if (connection != null)
+                connection.disconnect();
         }
     }
     private void addFormField(PrintWriter writer, String boundary, String name, String value) throws IOException
@@ -311,6 +347,36 @@ public class TimeCapsuleData
         writer.append(LINE_FEED);
         writer.append(value).append(LINE_FEED);
         writer.flush();
+    }
+    private BufferedImage scaleImageToMaxSize(BufferedImage image, int maxBytes) throws IOException
+    {
+        double scale = 1.0;
+        BufferedImage currentImage = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(currentImage, "png", baos);
+        byte[] bytes = baos.toByteArray();
+        if (bytes.length <= maxBytes)
+            return currentImage;
+
+        // Iteratively scale down the image (reduce by 10% each loop)
+        while (bytes.length > maxBytes && scale > 0.1)
+        {
+            scale *= 0.9;
+            int newWidth = (int) (image.getWidth() * scale);
+            int newHeight = (int) (image.getHeight() * scale);
+            BufferedImage scaledImage = new BufferedImage(newWidth, newHeight, image.getType());
+            Graphics2D g2d = scaledImage.createGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.drawImage(image, 0, 0, newWidth, newHeight, null);
+            g2d.dispose();
+            baos.reset();
+            ImageIO.write(scaledImage, "png", baos);
+            bytes = baos.toByteArray();
+            currentImage = scaledImage;
+        }
+        if (bytes.length > maxBytes)
+            throw new IOException("Unable to scale image to acceptable size. Final size: " + bytes.length + " bytes.");
+        return currentImage;
     }
 
     public int getId() { return this.id; }
