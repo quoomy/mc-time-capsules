@@ -25,6 +25,8 @@ public class ModRegistrations
     public static final ComponentType<Boolean> TIME_CAPSULE_IS_SENDING_COMPONENT = ComponentType.<Boolean>builder().codec(Codec.BOOL).packetCodec(PacketCodecs.BOOLEAN).build();
     public static final ComponentType<Boolean> TIME_CAPSULE_SEND_ATTEMPTED_COMPONENT = ComponentType.<Boolean>builder().codec(Codec.BOOL).packetCodec(PacketCodecs.BOOLEAN).build();
     public static final ComponentType<Boolean> TIME_CAPSULE_DATA_DONE = ComponentType.<Boolean>builder().codec(Codec.BOOL).packetCodec(PacketCodecs.BOOLEAN).build();
+    public static final ComponentType<String> TIME_CAPSULE_SEND_DATA_TEXT = ComponentType.<String>builder().codec(Codec.STRING).packetCodec(PacketCodecs.STRING).build();
+    public static final ComponentType<String> TIME_CAPSULE_SEND_DATA_SIGNATURE = ComponentType.<String>builder().codec(Codec.STRING).packetCodec(PacketCodecs.STRING).build();
 
     // ITEMS
     public static final Item TIME_CAPSULE_ITEM = registerItem("time_capsule", TimeCapsuleItem::new, new Item.Settings().fireproof().maxCount(1));
@@ -55,5 +57,7 @@ public class ModRegistrations
         Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(Timecapsules.MOD_ID, "time_capsule_is_sending"), TIME_CAPSULE_IS_SENDING_COMPONENT);
         Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(Timecapsules.MOD_ID, "time_capsule_send_attempted"), TIME_CAPSULE_SEND_ATTEMPTED_COMPONENT);
         Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(Timecapsules.MOD_ID, "time_capsule_data_done"), TIME_CAPSULE_DATA_DONE);
+        Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(Timecapsules.MOD_ID, "time_capsule_send_data_text"), TIME_CAPSULE_SEND_DATA_TEXT);
+        Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(Timecapsules.MOD_ID, "time_capsule_send_data_signature"), TIME_CAPSULE_SEND_DATA_SIGNATURE);
     }
 }

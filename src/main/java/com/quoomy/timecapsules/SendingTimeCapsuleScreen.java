@@ -76,6 +76,8 @@ public class SendingTimeCapsuleScreen extends Screen
     private final int centerY;
     private final int y;
 
+    private int ticks = 0;
+
     protected SendingTimeCapsuleScreen(ItemStack stack)
     {
         super(Text.of("Sending Time Capsule"));
@@ -154,12 +156,12 @@ public class SendingTimeCapsuleScreen extends Screen
     private void initPage2()
     {
         textField = new MultiLineTextFieldWidget(this.textRenderer, centerX - 150, y, 300, 100, Text.of("Message(max " + MAX_TEXT_SIZE + " characters)"), MAX_TEXT_SIZE);
-        textField.setText("");
+        textField.setText(item.getOrDefault(ModRegistrations.TIME_CAPSULE_SEND_DATA_TEXT, ""));
         this.addDrawableChild(textField);
 
-        signatureField = new TextFieldWidget(this.textRenderer, centerX - 25, y + 100 + 20, 50, 20, Text.of("Signature(optional, max " + MAX_SIGNATURE_SIZE + " characters)"));
+        signatureField = new TextFieldWidget(this.textRenderer, centerX - 50, y + 100 + 30, 100, 20, Text.of("Signature(optional, max " + MAX_SIGNATURE_SIZE + " characters)"));
         signatureField.setMaxLength(MAX_SIGNATURE_SIZE);
-        signatureField.setText("");
+        signatureField.setText(item.getOrDefault(ModRegistrations.TIME_CAPSULE_SEND_DATA_SIGNATURE, ""));
         this.addDrawableChild(signatureField);
     }
 
@@ -168,6 +170,13 @@ public class SendingTimeCapsuleScreen extends Screen
     {
         this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
+
+        ticks++;
+        if (ticks % 20 == 0)
+        {
+            item.set(ModRegistrations.TIME_CAPSULE_SEND_DATA_TEXT, textField.getText());
+            item.set(ModRegistrations.TIME_CAPSULE_SEND_DATA_SIGNATURE, signatureField.getText());
+        }
 
         if (!infoMessage.isEmpty())
             context.drawCenteredTextWithShadow(textRenderer, infoMessage, centerX, this.height - 10, 0xFFFFFF);
@@ -193,9 +202,15 @@ public class SendingTimeCapsuleScreen extends Screen
     private void renderPage2(DrawContext context, int mouseX, int mouseY, float delta)
     {
         int textLength = textField.getText().length();
-        String charCount = textLength + "/" + MAX_TEXT_SIZE;
+        String textText = "Time Capsule Content";
         if (textLength > 0)
-            context.drawText(textRenderer, charCount, centerX + 150 - textRenderer.getWidth(charCount), textField.getY() + 40, 0xFFFFFF, false);
+        {
+            textText += " (" + textLength + "/" + MAX_TEXT_SIZE + ")";
+        }
+        context.drawText(textRenderer, textText, centerX - (textRenderer.getWidth(textText) / 2), y - 10, 0xFFFFFF, false);
+
+        String signatureText = "Signature / Nickname (optional)";
+        context.drawText(textRenderer, signatureText, centerX - (textRenderer.getWidth(signatureText) / 2), y + 100 + 20, 0xFFFFFF, true);
     }
 
     @Override
