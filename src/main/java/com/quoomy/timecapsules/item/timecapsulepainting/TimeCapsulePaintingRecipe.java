@@ -7,7 +7,9 @@ import com.quoomy.timecapsules.mixin.DecorationItemAccessor;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.DecorationItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.IngredientPlacement;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
@@ -15,6 +17,8 @@ import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class TimeCapsulePaintingRecipe implements CraftingRecipe
 {
@@ -39,9 +43,8 @@ public class TimeCapsulePaintingRecipe implements CraftingRecipe
                     int id = stack.getOrDefault(ModRegistrations.TIME_CAPSULE_ID_COMPONENT, -1);
                     timeCapsuleCount += id >= 0 ? 1 : 0;
                 }
-                else if (stack.getItem() instanceof DecorationItem)
+                else if (stack.getItem() instanceof DecorationItem decorationItem)
                 {
-                    DecorationItem decorationItem = (DecorationItem) stack.getItem();
                     EntityType<?> entityType = ((DecorationItemAccessor) decorationItem).getEntityType();
                     paintingCount += entityType == EntityType.PAINTING ? 1 : 0;
                 }
@@ -111,7 +114,10 @@ public class TimeCapsulePaintingRecipe implements CraftingRecipe
     @Override
     public IngredientPlacement getIngredientPlacement()
     {
-        return null;
+        return IngredientPlacement.forShapeless(List.of(
+                Ingredient.ofItem(ModRegistrations.TIME_CAPSULE_ITEM),
+                Ingredient.ofItem(Items.PAINTING)
+        ));
     }
 
     @Override

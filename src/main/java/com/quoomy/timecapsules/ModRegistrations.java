@@ -5,6 +5,7 @@ import com.quoomy.timecapsules.item.timecapsule.TimeCapsuleItem;
 import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingEntity;
 import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingItem;
 import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingRecipe;
+import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingRecipeSerializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.component.ComponentType;
 import net.minecraft.entity.Entity;
@@ -16,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -67,8 +67,8 @@ public class ModRegistrations
 
     // RECIPES
     public static final RecipeSerializer<TimeCapsulePaintingRecipe> TIME_CAPSULE_PAINTING_RECIPE_SERIALIZER = registerRecipeSerializer(
-            "time_capsule_painting",
-            new SpecialCraftingRecipe.SpecialRecipeSerializer<>(TimeCapsulePaintingRecipe::new)
+            Identifier.of(Timecapsules.MOD_ID, "time_capsule_painting").toString(),
+            new TimeCapsulePaintingRecipeSerializer()
     );
 
     // REGISTRATION METHODS
