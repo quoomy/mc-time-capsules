@@ -2,9 +2,13 @@ package com.quoomy.timecapsules;
 
 import com.mojang.serialization.Codec;
 import com.quoomy.timecapsules.item.timecapsule.TimeCapsuleItem;
+import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingEntity;
 import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingItem;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.component.ComponentType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -47,6 +51,22 @@ public class ModRegistrations
                         entries.add(stack2);
                     }).build());
 
+    // ENTITIES
+    public static final EntityType<TimeCapsulePaintingEntity> TIME_CAPSULE_PAINTING_ENTITY_ENTITY_TYPE = registerEntity(
+            "painting",
+            EntityType.Builder.<TimeCapsulePaintingEntity>create(TimeCapsulePaintingEntity::new, SpawnGroup.MISC)
+                    .dropsNothing()
+                    .dimensions(0.5F, 0.5F)
+                    .maxTrackingRange(10)
+                    .trackingTickInterval(Integer.MAX_VALUE)
+    );
+
+    // REGISTRATION METHODS
+    private static <T extends Entity> EntityType<T> registerEntity(String id, EntityType.Builder<T> type)
+    {
+        RegistryKey<EntityType<?>> key = RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(Timecapsules.MOD_ID, id));
+        return Registry.register(Registries.ENTITY_TYPE, key, type.build(key));
+    }
     private static <T extends Item> T registerItem(String name, Function<Item.Settings, T> constructor, Item.Settings settings)
     {
         RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Timecapsules.MOD_ID, name));
