@@ -27,7 +27,7 @@ public class TimeCapsulePaintingEntityRenderer extends EntityRenderer<TimeCapsul
     private static final Map<Integer, CapsuleTexture> textureCache = new HashMap<>();
     private static final double DESIRED_ASPECT = 3.0 / 2.0;
 
-    protected TimeCapsulePaintingEntityRenderer(EntityRendererFactory.Context context)
+    public TimeCapsulePaintingEntityRenderer(EntityRendererFactory.Context context)
     {
         super(context);
     }
