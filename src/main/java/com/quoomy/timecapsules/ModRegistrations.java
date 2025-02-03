@@ -1,6 +1,8 @@
 package com.quoomy.timecapsules;
 
 import com.mojang.serialization.Codec;
+import com.quoomy.timecapsules.item.timecapsule.TimeCapsuleItem;
+import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingItem;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.component.ComponentType;
 import net.minecraft.item.Item;
@@ -30,6 +32,7 @@ public class ModRegistrations
 
     // ITEMS
     public static final Item TIME_CAPSULE_ITEM = registerItem("time_capsule", TimeCapsuleItem::new, new Item.Settings().fireproof().maxCount(1));
+    public static final Item TIME_CAPSULE_PAINTING_ITEM = registerItem("time_capsule_painting", TimeCapsulePaintingItem::new, new Item.Settings().maxCount(8));
 
     // ITEM GROUPS
     public static final ItemGroup time_capsules_group = Registry.register(Registries.ITEM_GROUP,

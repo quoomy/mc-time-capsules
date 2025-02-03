@@ -1,4 +1,4 @@
-package com.quoomy.timecapsules;
+package com.quoomy.timecapsules.item.timecapsule;
 
 import com.google.gson.JsonObject;
 
@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 
+import com.quoomy.timecapsules.Timecapsules;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.commons.io.FileUtils;
 import java.net.URL;
@@ -81,7 +82,6 @@ public class TimeCapsuleData
                 this.isValid = false;
                 return;
             }
-
 
             Timecapsules.LOGGER.info("Received JSON: {}", jsonObject);
 

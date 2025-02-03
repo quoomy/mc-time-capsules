@@ -1,5 +1,9 @@
-package com.quoomy.timecapsules;
+package com.quoomy.timecapsules.item.timecapsule;
 
+import com.quoomy.timecapsules.ModRegistrations;
+import com.quoomy.timecapsules.Timecapsules;
+import com.quoomy.timecapsules.screen.ReceivedTimeCapsuleScreen;
+import com.quoomy.timecapsules.screen.SendingTimeCapsuleScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;

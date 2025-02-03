@@ -1,5 +1,7 @@
-package com.quoomy.timecapsules;
+package com.quoomy.timecapsules.screen;
 
+import com.quoomy.timecapsules.item.timecapsule.TimeCapsuleData;
+import com.quoomy.timecapsules.Timecapsules;
 import com.quoomy.timecapsules.utils.ImageUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;

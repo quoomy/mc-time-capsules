@@ -1,5 +1,8 @@
-package com.quoomy.timecapsules;
+package com.quoomy.timecapsules.screen;
 
+import com.quoomy.timecapsules.ModRegistrations;
+import com.quoomy.timecapsules.item.timecapsule.TimeCapsuleItem;
+import com.quoomy.timecapsules.Timecapsules;
 import com.quoomy.timecapsules.utils.ImageUtils;
 import com.quoomy.timecapsules.utils.MultiLineTextFieldWidget;
 import net.minecraft.client.MinecraftClient;
@@ -76,7 +79,7 @@ public class SendingTimeCapsuleScreen extends Screen
 
     private int ticks = 0;
 
-    protected SendingTimeCapsuleScreen(ItemStack stack)
+    public SendingTimeCapsuleScreen(ItemStack stack)
     {
         super(Text.of("Sending Time Capsule"));
 
