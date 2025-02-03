@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.quoomy.timecapsules.item.timecapsule.TimeCapsuleItem;
 import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingEntity;
 import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingItem;
+import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingRecipe;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.component.ComponentType;
 import net.minecraft.entity.Entity;
@@ -13,6 +14,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -61,6 +65,12 @@ public class ModRegistrations
                     .trackingTickInterval(Integer.MAX_VALUE)
     );
 
+    // RECIPES
+    public static final RecipeSerializer<TimeCapsulePaintingRecipe> TIME_CAPSULE_PAINTING_RECIPE_SERIALIZER = registerRecipeSerializer(
+            "time_capsule_painting",
+            new SpecialCraftingRecipe.SpecialRecipeSerializer<>(TimeCapsulePaintingRecipe::new)
+    );
+
     // REGISTRATION METHODS
     private static <T extends Entity> EntityType<T> registerEntity(String id, EntityType.Builder<T> type)
     {
@@ -71,6 +81,10 @@ public class ModRegistrations
     {
         RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Timecapsules.MOD_ID, name));
         return Registry.register(Registries.ITEM, key, constructor.apply(settings.registryKey(key)));
+    }
+    private static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerRecipeSerializer(String id, S serializer)
+    {
+        return Registry.register(Registries.RECIPE_SERIALIZER, id, serializer);
     }
 
     public static void register()
