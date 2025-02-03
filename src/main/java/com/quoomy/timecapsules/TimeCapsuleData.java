@@ -85,19 +85,19 @@ public class TimeCapsuleData
 
             Timecapsules.LOGGER.info("Received JSON: {}", jsonObject);
 
-            if (jsonObject.has("capsule_id") && jsonObject.get("capsule_id").isJsonPrimitive())
+            if (jsonObject.has("capsule_id") && jsonObject.get("capsule_id").isJsonPrimitive() && !jsonObject.get("capsule_id").toString().isEmpty())
                 this.id = jsonObject.get("capsule_id").getAsInt();
-            if (jsonObject.has("text_data") && jsonObject.get("text_data").isJsonPrimitive())
+            if (jsonObject.has("text_data") && jsonObject.get("text_data").isJsonPrimitive() && !jsonObject.get("text_data").toString().isEmpty())
                 this.text = jsonObject.get("text_data").getAsString();
-            if (jsonObject.has("username") && jsonObject.get("username").isJsonPrimitive())
+            if (jsonObject.has("username") && jsonObject.get("username").isJsonPrimitive() && !jsonObject.get("username").toString().isEmpty())
                 this.username = jsonObject.get("username").getAsString();
-            if (jsonObject.has("signature") && jsonObject.get("signature").isJsonPrimitive())
+            if (jsonObject.has("signature") && jsonObject.get("signature").isJsonPrimitive() && !jsonObject.get("signature").toString().isEmpty())
                 this.signature = jsonObject.get("signature").getAsString();
-            if (jsonObject.has("game_version") && jsonObject.get("game_version").isJsonPrimitive())
+            if (jsonObject.has("game_version") && jsonObject.get("game_version").isJsonPrimitive() && !jsonObject.get("game_version").toString().isEmpty())
                 this.gameVersion = jsonObject.get("game_version").getAsString();
-            if (jsonObject.has("mod_loader") && jsonObject.get("mod_loader").isJsonPrimitive())
+            if (jsonObject.has("mod_loader") && jsonObject.get("mod_loader").isJsonPrimitive() && !jsonObject.get("mod_loader").toString().isEmpty())
                 this.modloader = jsonObject.get("mod_loader").getAsString();
-            if (jsonObject.has("timestamp") && jsonObject.get("timestamp").isJsonPrimitive())
+            if (jsonObject.has("timestamp") && jsonObject.get("timestamp").isJsonPrimitive() && !jsonObject.get("timestamp").toString().isEmpty())
                 this.timestamp = jsonObject.get("timestamp").getAsInt();
 
             if (jsonObject.has("image_url") && jsonObject.get("image_url").isJsonPrimitive())
@@ -385,6 +385,7 @@ public class TimeCapsuleData
     public String getUsername() { return this.username; }
     public String getSignature() { return this.signature; }
     public String getUserNameOrSignature() { return this.signature.isEmpty() ? this.username : this.signature; }
+    public String getUserNameAndSignature() { return this.signature.isEmpty() ? this.username : this.signature + " (" + this.username + ")"; }
     public String getGameVersion() { return this.gameVersion; }
     public String getModloader() { return this.modloader; }
     public int getTimestamp() { return this.timestamp; }

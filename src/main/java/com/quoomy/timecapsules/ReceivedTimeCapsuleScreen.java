@@ -222,10 +222,10 @@ public class ReceivedTimeCapsuleScreen extends Screen implements Closeable
         drawScaledLine(context, "TIME CAPSULE #" + data.getId(), textX, textY);
         textY += (int)(textRenderer.fontHeight * TEXT_SCALE + 2);
 
-        drawScaledLine(context, "Written by " + data.getUserNameOrSignature(), textX, textY);
+        drawScaledLine(context, "Written by " + data.getUserNameAndSignature(), textX, textY);
         textY += (int)(textRenderer.fontHeight * TEXT_SCALE + 2);
 
-        drawScaledLine(context, "In Universe " + data.getModloader() + " " + data.getGameVersion(), textX, textY);
+        drawScaledLine(context, "Universe " + data.getModloader() + " " + data.getGameVersion(), textX, textY);
         textY += (int)(textRenderer.fontHeight * TEXT_SCALE + 2);
 
         if (!data.getFormattedTimestamp().isEmpty())

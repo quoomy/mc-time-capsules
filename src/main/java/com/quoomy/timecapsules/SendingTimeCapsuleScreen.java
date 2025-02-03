@@ -362,6 +362,10 @@ public class SendingTimeCapsuleScreen extends Screen
                 Timecapsules.LOGGER.error("Failed to clean upload folder: {}", ex.getMessage());
             }
         }
+        finally
+        {
+            TimeCapsuleItem.uploadCapsule(item);
+        }
     }
 
     @Override

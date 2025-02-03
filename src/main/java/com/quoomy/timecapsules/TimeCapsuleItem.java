@@ -39,34 +39,11 @@ public class TimeCapsuleItem extends Item
 
         if (isSendingCapsule)
         {
-            MinecraftClient.getInstance().setScreen(new SendingTimeCapsuleScreen(stack));
-
-            CompletableFuture.runAsync(() -> {
-                TimeCapsuleData data = new TimeCapsuleData(TO_UPLOAD_ID);
-                if (!data.isValid())
-                {
-                    Timecapsules.LOGGER.info("Failed to send time capsule. Removing from to_upload folder.");
-                    if (user instanceof PlayerEntity player)
-                        player.sendMessage(Text.of("Failed to send time capsule. Please try again later with a stable connection."), false);
-                    removeToUploadFolder();
-                    return;
-                }
-
-                String sendingReturn = data.sendCapsule();
-                removeToUploadFolder();
-
-                if (sendingReturn.isEmpty())
-                {
-                    if (user instanceof PlayerEntity player)
-                        player.sendMessage(Text.of("Time capsule sent successfully!"), false);
-                    stack.decrement(1);
-                }
-                else
-                {
-                    if (user instanceof PlayerEntity player)
-                        player.sendMessage(Text.of("Failed to send time capsule. Please try again later with a stable connection and verify all data is correct."), false);
-                }
-            });
+            boolean isAttemptingDataSend = stack.getOrDefault(ModRegistrations.TIME_CAPSULE_ATTEMPTING_DATA_SEND, false);
+            if (!isAttemptingDataSend)
+                MinecraftClient.getInstance().setScreen(new SendingTimeCapsuleScreen(stack));
+            else
+                user.sendMessage(Text.of("Attempting to send time capsule, gimme a second."), false);
         }
         else
         {
@@ -123,7 +100,7 @@ public class TimeCapsuleItem extends Item
         super.inventoryTick(stack, world, entity, slot, selected);
     }
 
-    private void removeToUploadFolder()
+    private static void removeToUploadFolder()
     {
         CompletableFuture.runAsync(() -> {
             Path folderPath = MinecraftClient.getInstance().runDirectory
@@ -140,7 +117,6 @@ public class TimeCapsuleItem extends Item
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
                         {
-                            // Remove each file 🍆🤏
                             Files.delete(file);
                             return FileVisitResult.CONTINUE;
                         }
@@ -148,7 +124,6 @@ public class TimeCapsuleItem extends Item
                         @Override
                         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
                         {
-                            // Then delete directory once empty 🖕
                             Files.delete(dir);
                             return FileVisitResult.CONTINUE;
                         }
@@ -159,6 +134,41 @@ public class TimeCapsuleItem extends Item
             {
                 e.printStackTrace();
             }
+        });
+    }
+
+    public static void uploadCapsule(ItemStack stack)
+    {
+        stack.set(ModRegistrations.TIME_CAPSULE_ATTEMPTING_DATA_SEND, true);
+        CompletableFuture.runAsync(() -> {
+            PlayerEntity user = MinecraftClient.getInstance().player;
+
+            TimeCapsuleData data = new TimeCapsuleData(TO_UPLOAD_ID);
+            if (!data.isValid())
+            {
+                Timecapsules.LOGGER.info("Failed to send time capsule. Removing from to_upload folder.");
+                if (user instanceof PlayerEntity player)
+                    player.sendMessage(Text.of("Failed to send time capsule. Please try again later with a stable connection."), false);
+                removeToUploadFolder();
+                stack.set(ModRegistrations.TIME_CAPSULE_ATTEMPTING_DATA_SEND, false);
+                return;
+            }
+
+            String sendingReturn = data.sendCapsule();
+            removeToUploadFolder();
+
+            if (sendingReturn.isEmpty())
+            {
+                if (user instanceof PlayerEntity player)
+                    player.sendMessage(Text.of("Time capsule sent successfully! Thank you for making this mod awesome! :D"), false);
+                stack.decrement(1);
+            }
+            else
+            {
+                if (user instanceof PlayerEntity player)
+                    player.sendMessage(Text.of("Failed to send time capsule. Please try again later with a stable connection and verify all data is correct."), false);
+            }
+            stack.set(ModRegistrations.TIME_CAPSULE_ATTEMPTING_DATA_SEND, false);
         });
     }
 
