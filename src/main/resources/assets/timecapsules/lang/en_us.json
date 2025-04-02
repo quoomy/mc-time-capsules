@@ -1,5 +1,7 @@
 {
   "itemgroup.time_capsules_group": "Time Capsules",
 
-  "item.timecapsules.time_capsule": "Time Capsule"
+  "item.timecapsules.time_capsule": "Time Capsule",
+  "tooltip.timecapsules.timecapsule_is_sending": "Use this to send a message to the unknown",
+  "tooltip.timecapsules.timecapsule_is_receiving": "A message from another player in another world"
 }

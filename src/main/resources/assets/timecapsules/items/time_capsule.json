@@ -1,17 +1,20 @@
 {
-  "type": "minecraft:select",
-  "property": "minecraft:custom_model_data",
-  "cases": [
-    {
-      "when": "time_capsule_is_sending",
-      "model": {
-        "type": "minecraft:model",
-        "model": "timecapsules:item/glowing_item"
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:component",
+    "component": "timecapsules:time_capsule_is_sending",
+    "cases": [
+      {
+        "when": true,
+        "model": {
+          "type": "minecraft:model",
+          "model": "timecapsules:item/time_capsule_sending"
+        }
       }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "timecapsules:item/time_capsule_receiving"
     }
-  ],
-  "fallback": {
-    "type": "minecraft:model",
-    "model": "timecapsules:item/default_item"
   }
 }

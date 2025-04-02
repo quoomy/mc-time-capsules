@@ -5,11 +5,14 @@ import com.quoomy.timecapsules.Timecapsules;
 import com.quoomy.timecapsules.screen.ReceivedTimeCapsuleScreen;
 import com.quoomy.timecapsules.screen.SendingTimeCapsuleScreen;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipData;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -17,13 +20,16 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import javax.tools.Tool;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class TimeCapsuleItem extends Item
 {
@@ -32,6 +38,17 @@ public class TimeCapsuleItem extends Item
     public TimeCapsuleItem(Settings settings)
     {
         super(settings);
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type)
+    {
+        boolean isSendingCapsule = stack.getOrDefault(ModRegistrations.TIME_CAPSULE_IS_SENDING_COMPONENT, false);
+        if (isSendingCapsule)
+            textConsumer.accept(Text.translatable("tooltip.timecapsules.timecapsule_is_sending"));
+        else
+            textConsumer.accept(Text.translatable("tooltip.timecapsules.timecapsule_is_receiving"));
+        super.appendTooltip(stack, context, displayComponent, textConsumer, type);
     }
 
     @Override
