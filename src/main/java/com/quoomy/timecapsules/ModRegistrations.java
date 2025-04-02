@@ -2,15 +2,10 @@ package com.quoomy.timecapsules;
 
 import com.mojang.serialization.Codec;
 import com.quoomy.timecapsules.item.timecapsule.TimeCapsuleItem;
-import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingEntity;
-import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingItem;
-import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingRecipe;
-import com.quoomy.timecapsules.item.timecapsulepainting.TimeCapsulePaintingRecipeSerializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.component.ComponentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -40,7 +35,6 @@ public class ModRegistrations
 
     // ITEMS
     public static final Item TIME_CAPSULE_ITEM = registerItem("time_capsule", TimeCapsuleItem::new, new Item.Settings().fireproof().maxCount(1));
-    public static final Item TIME_CAPSULE_PAINTING_ITEM = registerItem("time_capsule_painting", TimeCapsulePaintingItem::new, new Item.Settings().maxCount(8));
 
     // ITEM GROUPS
     public static final ItemGroup time_capsules_group = Registry.register(Registries.ITEM_GROUP,
@@ -54,22 +48,6 @@ public class ModRegistrations
                         entries.add(stack1);
                         entries.add(stack2);
                     }).build());
-
-    // ENTITIES
-    public static final EntityType<TimeCapsulePaintingEntity> TIME_CAPSULE_PAINTING_ENTITY_ENTITY_TYPE = registerEntity(
-            "painting",
-            EntityType.Builder.<TimeCapsulePaintingEntity>create(TimeCapsulePaintingEntity::new, SpawnGroup.MISC)
-                    .dropsNothing()
-                    .dimensions(0.5F, 0.5F)
-                    .maxTrackingRange(10)
-                    .trackingTickInterval(Integer.MAX_VALUE)
-    );
-
-    // RECIPES
-    public static final RecipeSerializer<TimeCapsulePaintingRecipe> TIME_CAPSULE_PAINTING_RECIPE_SERIALIZER = registerRecipeSerializer(
-            Identifier.of(Timecapsules.MOD_ID, "time_capsule_painting").toString(),
-            new TimeCapsulePaintingRecipeSerializer()
-    );
 
     // REGISTRATION METHODS
     private static <T extends Entity> EntityType<T> registerEntity(String id, EntityType.Builder<T> type)
