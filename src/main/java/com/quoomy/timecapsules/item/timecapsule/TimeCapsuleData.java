@@ -12,6 +12,7 @@ import com.quoomy.timecapsules.Timecapsules;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.commons.io.FileUtils;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -129,10 +130,7 @@ public class TimeCapsuleData
                 }
             }
 
-            if (this.id < 0 || (this.username.isEmpty() && this.signature.isEmpty()) || this.text.isEmpty())
-                this.isValid = false;
-            else
-                this.isValid = true;
+            this.isValid = this.id >= 0 && (!this.username.isEmpty() || !this.signature.isEmpty()) && !this.text.isEmpty();
 
             if (this.isValid) // if valid, write to disk
             {
@@ -219,12 +217,9 @@ public class TimeCapsuleData
             }
         }
 
-        if ((this.username == null || this.username.isEmpty()) &&
-                (this.signature == null || this.signature.isEmpty()) ||
-                (this.text == null || this.text.isEmpty()))
-            this.isValid = false;
-        else
-            this.isValid = true;
+        this.isValid = ((this.username != null && !this.username.isEmpty()) ||
+                (this.signature != null && !this.signature.isEmpty())) &&
+                (this.text != null && !this.text.isEmpty());
     }
     private String readFileContents(File file)
     {
@@ -267,7 +262,7 @@ public class TimeCapsuleData
             connection.setReadTimeout(5000);
 
             outputStream = connection.getOutputStream();
-            writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true);
+            writer = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), true);
 
             addFormField(writer, boundary, "username", this.username);
             addFormField(writer, boundary, "text_data", this.text);

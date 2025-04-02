@@ -6,13 +6,16 @@ import com.quoomy.timecapsules.screen.ReceivedTimeCapsuleScreen;
 import com.quoomy.timecapsules.screen.SendingTimeCapsuleScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -74,11 +77,11 @@ public class TimeCapsuleItem extends Item
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
+    public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot)
     {
         if (!world.isClient)
         {
-            super.inventoryTick(stack, world, entity, slot, selected);
+            super.inventoryTick(stack, world, entity, slot);
             return;
         }
 
@@ -101,7 +104,7 @@ public class TimeCapsuleItem extends Item
             });
         }
 
-        super.inventoryTick(stack, world, entity, slot, selected);
+        super.inventoryTick(stack, world, entity, slot);
     }
 
     private static void removeToUploadFolder()

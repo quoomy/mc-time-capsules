@@ -79,7 +79,7 @@ public class ReceivedTimeCapsuleScreen extends Screen implements Closeable
             try
             {
                 NativeImage nativeImage = ImageUtils.convertToNativeImage(image);
-                this.capsuleTexture = new NativeImageBackedTexture(nativeImage);
+                new NativeImageBackedTexture(() -> "capsule_image_" + data.getId(), nativeImage);
                 this.capsuleTextureId = Identifier.of(Timecapsules.MOD_ID, "capsule_image_" + data.getId());
                 MinecraftClient.getInstance().getTextureManager().registerTexture(capsuleTextureId, capsuleTexture);
 

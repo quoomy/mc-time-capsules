@@ -74,7 +74,6 @@ public class SendingTimeCapsuleScreen extends Screen
     private final int width;
     private final int height;
     private final int centerX;
-    private final int centerY;
     private final int y;
 
     private int ticks = 0;
@@ -93,7 +92,6 @@ public class SendingTimeCapsuleScreen extends Screen
         width = client.getWindow().getScaledWidth();
         height = client.getWindow().getScaledHeight();
         centerX = width / 2;
-        centerY = height / 2;
         y = 20;
 
         loadScreenshotFiles();
@@ -271,7 +269,7 @@ public class SendingTimeCapsuleScreen extends Screen
         {
             selectedImage = ImageIO.read(selectedFile);
             NativeImage nativeImage = ImageUtils.convertToNativeImage(selectedImage);
-            previewTexture = new NativeImageBackedTexture(nativeImage);
+            previewTexture = new NativeImageBackedTexture(() -> "screenshot_" + selectedScreenshotIndex, nativeImage);
             previewTextureId = Identifier.of(Timecapsules.MOD_ID, "screenshot_preview");
             MinecraftClient.getInstance().getTextureManager().registerTexture(previewTextureId, previewTexture);
         }
