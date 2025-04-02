@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:select",
+  "property": "minecraft:custom_model_data",
+  "cases": [
+    {
+      "when": "time_capsule_is_sending",
+      "model": {
+        "type": "minecraft:model",
+        "model": "timecapsules:item/glowing_item"
+      }
+    }
+  ],
+  "fallback": {
+    "type": "minecraft:model",
+    "model": "timecapsules:item/default_item"
+  }
+}
