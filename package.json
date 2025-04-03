@@ -14,5 +14,13 @@
 		"url": "git@quoomy:quoomy/mc-time-capsules.git"
 	},
 	"author": "quoomy",
-	"license": "ISC"
+	"license": "ISC",
+	"dependencies": {
+		"fastify": "^5.2.2"
+	},
+	"devDependencies": {
+		"@types/node": "^22.14.0",
+		"i": "^0.3.7",
+		"npm": "^11.2.0"
+	}
 }
